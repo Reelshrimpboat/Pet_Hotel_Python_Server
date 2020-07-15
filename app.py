@@ -59,15 +59,27 @@ def pets_post():
         )
         cursor = connection.cursor()  # create cursor to interact with database
 
-        # defines database query
-        post_query = '''INSERT INTO "pets" (owner_id, pet, breed, color, checked_in)
-            VALUES(%s, %s, %s, %s, %s);'''
+        post_query = ()
+        post_values = ()
 
-        # defines converts values from pets into query value input
-        post_values = (pet["owner_id"], pet["pet"], pet["breed"],
+        if pet["checked_in"] == 'true' :
+            print('pet is checked_in')
+            # defines database query
+            post_query = '''INSERT INTO "pets" (owner_id, pet, breed, color, checked_in, checked_in_date)
+                            VALUES(%s, %s, %s, %s, %s, %s);'''
+            # defines converts values from pets into query value input
+            post_values = (pet["owner_id"], pet["pet"], pet["breed"],
+                           pet["color"], pet["checked_in"], pet["checked_in_date"])
+        elif pet["checked_in"] == 'false' :
+            print('pet is not checked_in')
+            # defines database query
+            post_query = '''INSERT INTO "pets" (owner_id, pet, breed, color, checked_in)
+                            VALUES(%s, %s, %s, %s, %s);'''
+            # defines converts values from pets into query value input
+            post_values = (pet["owner_id"], pet["pet"], pet["breed"],
                        pet["color"], pet["checked_in"])
-        print('post query:', post_query, " : post_values:",
-              post_values)  # log to check query and values
+
+        print('post query:', post_query, " : post_values:",  post_values)  # log to check query and values
 
         # sends query and values to database
         cursor.execute(post_query, post_values)
