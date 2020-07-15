@@ -1,3 +1,5 @@
+-- Database name is pet_hotel
+
 CREATE TABLE owners
 (
 	id SERIAL PRIMARY KEY,
