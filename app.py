@@ -7,16 +7,20 @@ import pets
 def home():
     return "Hello, Flask!"
 
-# GET/POST ROUTE for PET TABLE
-@app.route("/pets", methods=['GET', 'POST'])
+# GET/POST/PUT/DELETE ROUTE for PET TABLE
+@app.route("/pets", methods=['GET', 'POST', 'PUT', 'DELETE'])
 def pets_route() :
     if request.method == 'GET':  # checks method to see if GET
         return pets.pets_get()
     elif request.method == 'POST':  # checks method to see if POST
         return pets.pets_post()
-
-
-@app.route('/pets', methods=[ 'PUT', 'DELETE'])
-def pet_route():
-    if request.method == 'PUT':  # checks method to see if PUT   
+    elif request.method == 'PUT':  # checks method to see if PUT
         return pets.pet_check_in()
+    elif request.method == 'DELETE':  # checks method to see if DELETE
+        return pets.pet_delete()
+
+
+# @app.route('/pets/<int:index>', methods=['PUT', 'DELETE'])
+# def pet_route():
+#     if request.method == 'PUT':  # checks method to see if PUT   
+#         return pets.pet_check_in()
