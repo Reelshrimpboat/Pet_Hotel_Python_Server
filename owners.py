@@ -25,7 +25,13 @@ def owners_get():
         # logs that query has been sent to the database
         print("selecting rows from owners")
         owners = cursor.fetchall()
-        return jsonify(owners)  # return data as a JSON string
+        print(owners)
+        owners_list = [] # defines list of owners to be appended to
+        for row in owners: # loop that inserts owners as dictionaries into owners_list
+	        owners_list.append(
+                    {"id": row[0], "name": row[1]})
+        print(owners_list)
+        return jsonify(owners_list)  # return data as a JSON string
     
     except (Exception, psycopg2.Error) as error: #error catching
         print("Error while fetching data from PostgreSQL", error) #logs error
