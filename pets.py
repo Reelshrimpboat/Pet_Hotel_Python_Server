@@ -158,6 +158,8 @@ def pet_check_in():
                                 WHERE id = (%s);'''
             # defines converts values from pets into query value input
             put_values = (checked_in_date, check_in["id"])
+            # sends query and values to database
+            cursor.execute(put_query , put_values)
         elif check_in["checked_in"] == 'false':
             print('pet is checking out')
             # defines database query
@@ -166,12 +168,12 @@ def pet_check_in():
                                 WHERE id = (%s);'''
             # defines converts values from pets into query value input
             put_values = (check_in["id"])
+            # sends query and values to database
+            cursor.execute(put_query % put_values)
 
         print('put query:', put_query, " : put_values:",
               put_values)  # log to check query and values
 
-        # sends query and values to database
-        cursor.execute(put_query, put_values)
         connection.commit()  # commits query to database
 
         # move to next action and return success message to server
@@ -223,7 +225,7 @@ def pet_delete():
               delete_values)  # log to check query and values
 
         # sends query and values to database
-        cursor.execute(delete_query, delete_values)
+        cursor.execute(delete_query % delete_values)
         connection.commit()  # commits query to database
 
         # move to next action and return success message to server
