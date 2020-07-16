@@ -154,7 +154,7 @@ def pet_check_in():
             print('pet is checking in')
             # defines database query
             put_query = '''UPDATE pets
-                                SET checked_in = false , checked_in_date = %s
+                                SET checked_in = true , checked_in_date = %s
                                 WHERE id = (%s);'''
             # defines converts values from pets into query value input
             put_values = (checked_in_date, check_in["id"])
