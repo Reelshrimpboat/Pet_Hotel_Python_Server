@@ -1,12 +1,20 @@
 from flask import Flask, request, jsonify # imports items from Flask for CRUD functions
 app = Flask(__name__) # defines app as flask object
 import psycopg2 # imports psycopg2 for database queries
+import owners
 import pets
 
 @app.route("/")
 def home():
     return "Hello, Flask!"
 
+@app.route("/owners", methods=['POST', 'GET'])
+def owners_route():
+    if request.method == 'POST':
+        return owners.owners_post()
+    elif request.method == 'GET':
+        return owners.owners_get()
+        
 # GET/POST/PUT/DELETE ROUTE for PET TABLE
 @app.route("/pets", methods=['GET', 'POST', 'PUT', 'DELETE'])
 def pets_route() :
