@@ -163,7 +163,7 @@ def pet_check_in():
                                 SET checked_in = false , checked_in_date = null
                                 WHERE id = (%s);'''
             # defines converts values from pets into query value input
-            pu_values = (check_in["id"])
+            put_values = (check_in["id"])
 
         print('put query:', put_query, " : put_values:",
               put_values)  # log to check query and values
