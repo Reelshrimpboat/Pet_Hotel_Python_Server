@@ -21,7 +21,7 @@ def pets_get():
         # create cursor to interact with database
         cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
-        get_query = '''SELECT pets.id, pets.owner_id, pets.breed, pets.checked_in, pets.checked_in_date, pets.color, pets.pet, owners.name AS owner_name
+        get_query = '''SELECT pets.id, pets.owner_id, pets.breed, pets.checked_in, pets.checked_in_date, pets.color, pets.pet, owners.name AS owner
                             FROM pets
                             JOIN owners ON pets.owner_id = owners.id;'''  # defines query for GET request
 
@@ -35,7 +35,7 @@ def pets_get():
         pets_list = [] # defines list of pets to be appended to
         for row in pets: # loop that inserts pets as dictionaries into pets_list
 	        pets_list.append(
-	            {"id": row["id"], "owner_id": row["owner_id"], "owner_name": row["owner_name"], "pet": row["pet"], "breed": row["breed"], "color": row["color"], "checked_in": row["checked_in"], "checked_in_date": row["checked_in_date"]})
+	            {"id": row["id"], "owner_id": row["owner_id"], "owner": row["owner"], "pet": row["pet"], "breed": row["breed"], "color": row["color"], "checked_in": row["checked_in"], "checked_in_date": row["checked_in_date"]})
 
         print(pets_list)
 
