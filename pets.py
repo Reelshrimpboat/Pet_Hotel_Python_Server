@@ -1,6 +1,12 @@
-from flask import Flask, request, jsonify # imports items from Flask for CRUD functions
-app = Flask(__name__) # defines app as flask object
 import psycopg2 # imports psycopg2 for database queries
+import psycopg2.extras
+from datetime import datetime
+from flask import Flask, request, jsonify # imports items from Flask for CRUD functions
+app = Flask(__name__)  # defines app as flask object
+
+
+
+
 
 # GET ROUTE for PET TABLE
 def pets_get():
@@ -12,7 +18,8 @@ def pets_get():
             port="5432",
             database="pet_hotel"
         )
-        cursor = connection.cursor()  # create cursor to interact with database
+        # create cursor to interact with database
+        cursor = connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
         get_query = "select * from pets"  # defines query for GET request
 
@@ -23,7 +30,15 @@ def pets_get():
         pets = cursor.fetchall()  # defines list 'pets' as what returns from database
         print("pets: ", pets)  # logs what was defined in pets
 
-        return jsonify(pets)  # returns data as JSON string
+        pets_list = [] # defines list of pets to be appended to
+        for row in pets: # loop that inserts pets as dictionaries into pets_list
+	        pets_list.append(
+	            {"id": row["id"], "owner_id": row["owner_id"], "pet": row["pet"], "breed": row["breed"], "color": row["color"], "checked_in": row["checked_in"], "checked_in_date": row["checked_in_date"]})
+
+        print(pets_list)
+
+        # return jsonify(pets)  # returns data as JSON string
+        return jsonify(pets_list)  # returns data as JSON string
 
     except (Exception, psycopg2.Error) as error:  # error catching
         print("Error while fetching data from PostgreSQL", error)  # logs error
@@ -38,6 +53,11 @@ def pets_get():
 # END GET ROUTE for PET TABLE
 
 
+
+
+
+
+###################################################################################################################
 
 
 
@@ -60,14 +80,15 @@ def pets_post():
         post_query = ()
         post_values = ()
 
-        if pet["checked_in"] == 'true':
+        if pet["checked_in"] == 'true': # checks if pet is checked_in when entered into system
             print('pet is checked_in')
+            checked_in_date = datetime.today().strftime('%Y-%m-%d')  # gets date for today
             # defines database query
             post_query = '''INSERT INTO "pets" (owner_id, pet, breed, color, checked_in, checked_in_date)
                             VALUES(%s, %s, %s, %s, %s, %s);'''
             # defines converts values from pets into query value input
             post_values = (pet["owner_id"], pet["pet"], pet["breed"],
-                           pet["color"], pet["checked_in"], pet["checked_in_date"])
+                           pet["color"], pet["checked_in"], checked_in_date)
         elif pet["checked_in"] == 'false':
             print('pet is not checked_in')
             # defines database query
@@ -85,7 +106,7 @@ def pets_post():
         connection.commit()  # commits query to database
 
         # move to next action and return success message to server
-        return ("Record inserted successfully into pets table", 200)
+        return ("Pet inserted successfully into pets table", 200)
 
     except (Exception, psycopg2.Error) as error:  # error catching
         print("Error while fetching data from PostgreSQL", error)  # log error
@@ -99,6 +120,10 @@ def pets_post():
             print("PostgreSQL connection is closed")
 # END POST ROUTE for PET TABLE
 
+
+
+
+###################################################################################################################
 
 
 
@@ -118,31 +143,33 @@ def pet_check_in():
         )
         cursor = connection.cursor()  # create cursor to interact with database
 
-        post_query = ()
-        post_values = ()
+        put_query = ()
+        put_values = ()
+
+        checked_in_date = datetime.today().strftime('%Y-%m-%d') # gets date for today
 
         if check_in["checked_in"] == 'true':
             print('pet is checking in')
             # defines database query
-            post_query = '''UPDATE pets
+            put_query = '''UPDATE pets
                                 SET checked_in = false , checked_in_date = %s
                                 WHERE id = (%s);'''
             # defines converts values from pets into query value input
-            post_values = (check_in["checked_in_date"], check_in["id"])
+            put_values = (checked_in_date, check_in["id"])
         elif check_in["checked_in"] == 'false':
             print('pet is checking out')
             # defines database query
-            post_query = '''UPDATE pets
+            put_query = '''UPDATE pets
                                 SET checked_in = false , checked_in_date = null
                                 WHERE id = (%s);'''
             # defines converts values from pets into query value input
-            post_values = (check_in["id"])
+            pu_values = (check_in["id"])
 
-        print('post query:', post_query, " : post_values:",
-              post_values)  # log to check query and values
+        print('put query:', put_query, " : put_values:",
+              put_values)  # log to check query and values
 
         # sends query and values to database
-        cursor.execute(post_query, post_values)
+        cursor.execute(put_query, put_values)
         connection.commit()  # commits query to database
 
         # move to next action and return success message to server
@@ -159,6 +186,13 @@ def pet_check_in():
             # logs that connection is closed
             print("PostgreSQL connection is closed")
 # END PUT ROUTE for PET TABLE
+
+
+
+
+###################################################################################################################
+
+
 
 
 # DELETE ROUTE for PET TABLE, to change checked in status
@@ -178,20 +212,20 @@ def pet_delete():
 
 
         # defines database query
-        post_query = ''' DELETE FROM pets
+        delete_query = ''' DELETE FROM pets
                                 WHERE id = %s;'''
         # defines converts values from pets into query value input
-        post_values = (delete["id"])
+        delete_values = (delete["id"])
 
-        print('post query:', post_query, " : post_values:",
-              post_values)  # log to check query and values
+        print('delete query:', delete_query, " : delete_values:",
+              delete_values)  # log to check query and values
 
         # sends query and values to database
-        cursor.execute(post_query, post_values)
+        cursor.execute(delete_query, delete_values)
         connection.commit()  # commits query to database
 
         # move to next action and return success message to server
-        return ("Pet's state of checked_in has been changed", 200)
+        return ("Pet has been removed from database", 200)
 
     except (Exception, psycopg2.Error) as error:  # error catching
         print("Error while fetching data from PostgreSQL", error)  # log error
