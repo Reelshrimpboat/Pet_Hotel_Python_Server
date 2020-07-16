@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify # imports items from Flask for CRUD functions
 app = Flask(__name__) # defines app as flask object
 import psycopg2 # imports psycopg2 for database queries
+#import owner page
+import owners
 
 @app.route("/")
 def home():
@@ -98,3 +100,11 @@ def pets_post():
             connection.close()  # closes database connection
             print("PostgreSQL connection is closed") # logs that connection is closed
 # END POST ROUTE for PET TABLE
+
+@app.route("/owners", methods=['POST', 'GET'])
+def owners_route():
+    if request.method == 'POST':
+        return owners.owners_post()
+    elif request.method == 'GET':
+        return owners.owners_get()
+        
