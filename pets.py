@@ -69,8 +69,8 @@ def pets_post():
     #  POST occurs here:
     try:
         # print(request.values['name'])
-        pet = request.values  # sets pet as incoming JSON object
-
+        pet = request.json  # sets pet as incoming JSON object
+        print('pet: ' , pet)
         # connect to database
         connection = psycopg2.connect(
             host="localhost",
@@ -79,25 +79,25 @@ def pets_post():
         )
         cursor = connection.cursor()  # create cursor to interact with database
 
-        post_query = ()
-        post_values = ()
+        # post_query = ()
+        # post_values = ()
 
-        if pet["checked_in"] == 'true': # checks if pet is checked_in when entered into system
-            print('pet is checked_in')
-            checked_in_date = datetime.today().strftime('%Y-%m-%d')  # gets date for today
+        # if pet["checked_in"] == 'true': # checks if pet is checked_in when entered into system
+        #     print('pet is checked_in')
+        #     checked_in_date = datetime.today().strftime('%Y-%m-%d')  # gets date for today
+        #     # defines database query
+        #     post_query = '''INSERT INTO "pets" (owner_id, pet, breed, color, checked_in, checked_in_date)
+        #                     VALUES(%s, %s, %s, %s, %s, %s);'''
+        #     # defines converts values from pets into query value input
+        #     post_values = (pet["owner_id"], pet["pet"], pet["breed"],
+        #                    pet["color"], pet["checked_in"], checked_in_date)
+        # elif pet["checked_in"] == 'false':
+            # print('pet is not checked_in')
             # defines database query
-            post_query = '''INSERT INTO "pets" (owner_id, pet, breed, color, checked_in, checked_in_date)
-                            VALUES(%s, %s, %s, %s, %s, %s);'''
-            # defines converts values from pets into query value input
-            post_values = (pet["owner_id"], pet["pet"], pet["breed"],
-                           pet["color"], pet["checked_in"], checked_in_date)
-        elif pet["checked_in"] == 'false':
-            print('pet is not checked_in')
-            # defines database query
-            post_query = '''INSERT INTO "pets" (owner_id, pet, breed, color, checked_in)
+        post_query = '''INSERT INTO "pets" (owner_id, pet, breed, color, checked_in)
                             VALUES(%s, %s, %s, %s, %s);'''
             # defines converts values from pets into query value input
-            post_values = (pet["owner_id"], pet["pet"], pet["breed"],
+        post_values = (pet["owner_id"], pet["pet"], pet["breed"],
                            pet["color"], pet["checked_in"])
 
         print('post query:', post_query, " : post_values:",
@@ -135,7 +135,7 @@ def pet_check_in():
     #  PUT occurs here:
     try:
         
-        check_in = request.values  # sets check_in with values sent from request
+        check_in = request.json  # sets check_in with values sent from request
 
         # connect to database
         connection = psycopg2.connect(
@@ -199,12 +199,12 @@ def pet_check_in():
 
 
 
-# DELETE ROUTE for PET TABLE, to change checked in status
+# DELETE ROUTE for PET TABLE
 def pet_delete():
     #  DELETE occurs here:
     try:
 
-        delete = request.values  # sets delete with values sent from request
+        delete = request.json  # sets delete with values sent from request
 
         # connect to database
         connection = psycopg2.connect(

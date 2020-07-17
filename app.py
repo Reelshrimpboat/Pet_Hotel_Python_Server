@@ -8,12 +8,14 @@ import pets
 def home():
     return "Hello, Flask!"
 
-@app.route("/owners", methods=['POST', 'GET'])
+@app.route("/owners", methods=['POST', 'GET', 'DELETE'])
 def owners_route():
-    if request.method == 'POST':
+    if request.method == 'POST':  # checks method to see if POST
         return owners.owners_post()
-    elif request.method == 'GET':
+    elif request.method == 'GET':  # checks method to see if GET
         return owners.owners_get()
+    elif request.method == 'DELETE':  # checks method to see if DELETE
+        return owners.owner_delete()
         
 # GET/POST/PUT/DELETE ROUTE for PET TABLE
 @app.route("/pets", methods=['GET', 'POST', 'PUT', 'DELETE'])

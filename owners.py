@@ -49,8 +49,9 @@ def owners_get():
 def owners_post():  #need to write a way to reccieve owner name, write in a variable to recieve owner name
     # write Post route here
     try:
-        owner = request.values #sets owner as incoming JSON object
-
+        print('getting owner', request)
+        owner = request.json #sets owner as incoming JSON object
+        print('owner: ' , owner)
         # connect to database
         connection = psycopg2.connect(
             host="localhost",
@@ -84,3 +85,45 @@ def owners_post():  #need to write a way to reccieve owner name, write in a vari
             print("PostgreSQL connection is closed") #logs that connection is closed
 #End POST route for owner table
 
+# DELETE ROUTE for OWNER TABLE
+def owner_delete():
+    #  DELETE occurs here:
+    try:
+        print('deleting owner', request)
+        delete = request.json # sets delete with values sent from request
+        print('owner to delete: ', delete)
+        # connect to database
+        connection = psycopg2.connect(
+            host="localhost",
+            port="5432",
+            database="pet_hotel"
+        )
+        cursor = connection.cursor()  # create cursor to interact with database
+
+        # defines database query
+        delete_query = ''' DELETE FROM owners
+                                WHERE id = %s;'''
+        # defines converts values from pets into query value input
+        delete_values = (delete["id"])
+
+        print('delete query:', delete_query, " : delete_values:",
+              delete_values)  # log to check query and values
+
+        # sends query and values to database
+        cursor.execute(delete_query % delete_values)
+        connection.commit()  # commits query to database
+
+        # move to next action and return success message to server
+        return ("Pet has been removed from database", 200)
+
+    except (Exception, psycopg2.Error) as error:  # error catching
+        print("Error while fetching data from PostgreSQL", error)  # log error
+
+    # ending tag/ to do after error
+    finally:
+        if(connection):  # if for when connection remains open
+            cursor.close()  # closes cursor
+            connection.close()  # closes database connection
+            # logs that connection is closed
+            print("PostgreSQL connection is closed")
+# END DELTE ROUTE for PET TABLE
